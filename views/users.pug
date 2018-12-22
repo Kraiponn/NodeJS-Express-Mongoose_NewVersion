@@ -1,0 +1,49 @@
+extends layout
+
+block content
+    .container.p-3
+        .card
+            .card-body
+                h2.card-tile= (user ? 'Edit User' : 'Add User Management')
+                form(action=(user ? '/users/edit/' + user._id : '/users/add'), method="POST")
+                    .form-row
+                        .form-group.col-md-6
+                            label(for="firstname") FirstName:
+                            input(type="text" name="firstname" id="firstname" value=(user ? user.firstname : '')).form-control
+                        .form-group.col-md-6
+                            label(for="lastname") LastName:
+                            input(type="text" name="lastname" id="lastname" value=(user ? user.lastname : '')).form-control
+                    
+                    .form-row
+                        .form-group.col-md-6
+                            label(for="status") Status:
+                            select(name="status" id="status").form-control
+                                option(value="active" selected=(user && user.status == 'active')) active
+                                option(value="pending" selected=(user && user.status == 'pending')) pending
+                        .form-group.col-md-6
+                            label(for="age") Age:
+                            input(type="text" name="age" id="age" value=(user ? user.age : '')).form-control
+                    .form-row
+                        .form-group.col-md-6
+                            button(type="reset").btn.btn-outline-secondary.btn-block Reset
+                        .form-group.col-md-6
+                            button(type="submit").btn.btn-primary.btn-block= (user ? 'Edited' : 'Added')
+
+    if users
+        .container.p-3
+            h2 Users List
+            .row
+                each user in users
+                    .col-6.col-md-4
+                        h4.text-primary= user.firstname + ' ' + user.lastname 
+                        p= 'Age: ' + user.age
+                        p= 'Date: ' + user.created_date
+                        p(class=(user.status == 'active' ? 'text-success' : 'text-danger'))= 'Status: ' + user.status
+                        div
+                            ul.list-inline
+                                li.list-inline-item
+                                    a(href="/users/edit/" + user._id).btn.btn-success Edit
+                                li.list-inline-item
+                                    form(action="/users/delete/" + user._id, method="post")
+                                        button(type="submit").btn.btn-danger Delete
+                        hr                 
